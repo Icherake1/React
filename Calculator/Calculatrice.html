@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <style>
+
+    .like-this{
+      width: 440px;
+      height:400px;
+    }
+
+    .calculator{
+      display:grid;
+      grid-template-columns: repeat(4, 60px);
+    }
+    button {
+      height: 50px;
+      background-color: #F5C7FF;
+      border: 1.5px solid #500062;
+    }
+    .operator{
+      background-color: #500062;
+      color: white;
+    }
+    .display{
+      text-align:right;
+      width:227px;
+      height:40px;
+      font-size:30px;
+      border:2px solid #500062;
+      padding-right:10px;
+      padding-top:5px;
+        }
+  </style>
+
+  <meta charset="utf-8">
+  <title>React Example</title>
+  <!-- Include React and React DOM (development versions) -->
+  <script src="./node_modules/react/umd/react.development.js"></script>
+  <script src="./node_modules/react-dom/umd/react-dom.development.js"></script>
+  <!-- Include Babel from the local path -->
+  <script src="./node_modules/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+  <h1 id="root">Calculatrice</h1>
+  <h1 id="x"></h1>
+  <div id="bob" ></div>
+
+  <!-- Use type="text/babel" to indicate JSX code -->
+  <script type="text/babel">
+
+    function Calculator(){ //parent component
+      const [display, setDisplay] = React.useState({
+        current: "0",
+        total: "0",
+        isinit: true,
+        lastoper:""
+      });
+      function handlnum(value){ // callback fct we pass these callback functions down to our child component by creating this on click property
+        let newValue=value;
+        //alert('handle number '+ value);
+        if(!display.isinit){
+          newValue= display.current + value;
+        }
+        setDisplay({current:newValue, total:display.total, isinit: false, lastoper:display.lastoper});
+
+      }
+      function handlope(value) {
+        const total = docalc();
+        setDisplay({current:total.toString(), total: total.toString(), isinit:true, lastoper:value});
+        //alert("hhh")
+      }
+
+      function docalc(){
+        let total= parseInt(display.total);
+        debugger;
+
+        console.log(display);
+
+
+        switch(display.lastoper){
+          case "+":
+          total+=parseInt(display.current);
+          break;
+          case "-":
+          total-=parseInt(display.current);
+          break;
+          case "*":
+          total*=parseInt(display.current);
+          break;
+          case "/":
+          total/=parseInt(display.current);
+          break;
+          default:
+          total = parseInt(display.current);
+        }
+        return total;
+      }
+      function handleclear(){
+        setDisplay ({
+          current: "0",
+          total: "0",
+          isinit: true,
+          lastoper:""
+        });
+      }
+      function renderDisplay(){
+        return display.current;
+      }
+
+
+      function handlequal(){
+        let total = docalc();
+        setDisplay({current:total.toString(), total: total.toString(), isinit:true, lastoper:"="})
+      }
+
+      return (
+      <div>
+        <div className="display">{renderDisplay()}</div>
+        <div className="calculator">
+          <CalcButton value="7" onClick={handlnum}/>
+          <CalcButton value="8" onClick={handlnum}/>
+          <CalcButton value="9" onClick={handlnum}/>
+          <CalcButton className="operator" value="/" onClick={handlope}/>
+
+          <CalcButton value="4" onClick={handlnum}/>
+          <CalcButton value="5" onClick={handlnum}/>
+          <CalcButton value="6" onClick={handlnum}/>
+          <CalcButton className="operator" value="*" onClick={handlope}/>
+
+          <CalcButton value="1" onClick={handlnum}/>
+          <CalcButton value="2" onClick={handlnum}/>
+          <CalcButton value="3" onClick={handlnum}/>
+          <CalcButton className="operator" value="-" onClick={handlope}/>
+
+          <CalcButton value="C" onClick={handlnum} onClick={handleclear}/>
+          <CalcButton value="0" onClick={handlnum} onClick={handlnum}/>
+          <CalcButton value="=" onClick={handlope}/>
+          <CalcButton className="operator" value="+" onClick={handlope}/>
+        </div>
+        </div>
+      )
+    }
+    function CalcButton(props){ //child component, prop is an object
+      return <button className={props.className} onClick={() => props.onClick(props.value, "hello")}>{props.value}</button>
+    }
+    ReactDOM.render(<div className="like-this"><Calculator/></div>, document.getElementById("bob"));
+</script>
