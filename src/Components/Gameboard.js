@@ -2,73 +2,52 @@ import React, {useState} from "react";
 import Gamecircle from "./Gamecircle";
 import '../Game.css'
 
+
+const PLR0=0;
+const PLR1=1;
+const PLR2=2;
+
+
+
 const Gameboard = () => {
-  const [gameBoard, updategameboard] = useState(Array(16).fill(0));
+  const [gameBoard, updategameboard] = useState(Array(16).fill(2));
+  const [currentplayer, nextplayer] = useState(PLR0);
   console.log(gameBoard);
+
   const circleclicked = (id) => {
     console.log(id + ' youpi');
-    gameBoard[id]= 1;
-    updategameboard=(gameBoard);
+    const el_board = [... gameBoard];
+    el_board[id]= currentplayer;
+    updategameboard(el_board);
+
+    nextplayer(currentplayer === PLR1 ? PLR2 : PLR1);
     console.log(gameBoard);
   }
+
+const rendercircle= id=>{
+  return <Gamecircle id={id} className={`player_${gameBoard[id]}`} oncircleclick={circleclicked}/>
+}
+
   return (
   <div className="gameboard">
-  <Gamecircle id={1} className="player1" oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={2} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
-  <Gamecircle id={3} oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={4} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
-  <Gamecircle id={5} oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={6} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
-  <Gamecircle id={7} oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={8} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
-  <Gamecircle id={9} oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={10} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
-  <Gamecircle id={11} oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={12} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
-  <Gamecircle id={13} oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={14} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
-  <Gamecircle id={15} oncircleclick={circleclicked}>
-  </Gamecircle>
-
-  <Gamecircle id={16} oncircleclick={circleclicked}>
-
-  </Gamecircle>
-
+    {rendercircle(0)}
+    {rendercircle(1)}
+    {rendercircle(2)}
+    {rendercircle(3)}
+    {rendercircle(4)}
+    {rendercircle(5)}
+    {rendercircle(6)}
+    {rendercircle(7)}
+    {rendercircle(8)}
+    {rendercircle(9)}
+    {rendercircle(10)}
+    {rendercircle(11)}
+    {rendercircle(12)}
+    {rendercircle(13)}
+    {rendercircle(14)}
+    {rendercircle(15)}
+    {rendercircle(16)}
+    
    </div>
  )
 }
