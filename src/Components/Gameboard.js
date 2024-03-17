@@ -1,54 +1,92 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Gamecircle from "./Gamecircle";
-import '../Game.css'
+import '../Game.css';
+import Header from './head'
+import Footer from './fooot'
+import { iswinner, draw, getcomputermove} from '../help';
+import {gamestate, gamestarted, gamehaswinner, gameover, PLR0, PLR1, PLR2, nocircle} from './Constantes'
 
 
-const PLR0=0;
-const PLR1=1;
-const PLR2=2;
 
 
 
 const Gameboard = () => {
-  const [gameBoard, updategameboard] = useState(Array(16).fill(2));
-  const [currentplayer, nextplayer] = useState(PLR0);
-  console.log(gameBoard);
+  const [gameBoard, updategameboard] = useState(Array(16).fill(PLR0));
+  const [currentplayer, nextplayer] = useState(PLR1);
+  const [gamestatee, updategamestate] = useState(gamestarted);
+  const [thewinner, thenextwinner] = useState(PLR0);
+
+
+  useEffect (() => {
+    initalisethegame();
+  },[]);
+
+  const initalisethegame = () => {
+    updategameboard(Array(16).fill(PLR0));
+    nextplayer(PLR1);
+    updategamestate(gamestarted);
+  }
+
+
+  const suggestmove = () => {
+    circleclicked(getcomputermove(gameBoard));
+  }
+
+  const init_b = () =>{
+    const circles = [];
+    for (let i=0;i<nocircle; i++){
+      circles.push(rendercircle(i));
+    }
+    return circles;
+  }
+
 
   const circleclicked = (id) => {
-    console.log(id + ' youpi');
-    const el_board = [... gameBoard];
-    el_board[id]= currentplayer;
-    updategameboard(el_board);
+    console.log(id + ' clicked');
+    if(gameBoard[id]!==PLR0){
+      return;
+    }
+    if(gamestatee!==gamestarted){
+      return;
+    }
+    // const el_board = [... gameBoard];
+    // el_board[id]= currentplayer;
+    // updategameboard(el_board);
+    if(iswinner(gameBoard,id, currentplayer)){
+      console.log("winner is "+ currentplayer);
+      updategamestate(gamehaswinner);
+      thenextwinner(currentplayer);
+    }
+
+    if(draw(gameBoard,id, currentplayer)){
+      console.log("game over");
+      updategamestate(gameover);
+      thenextwinner(PLR0);
+    }
+
+    updategameboard(prev => {//callbackS
+      return prev.map((circle, positionindex) => {
+        if (positionindex === id) return currentplayer ;
+        return circle;
+      })
+    })
 
     nextplayer(currentplayer === PLR1 ? PLR2 : PLR1);
     console.log(gameBoard);
   }
 
 const rendercircle= id=>{
-  return <Gamecircle id={id} className={`player_${gameBoard[id]}`} oncircleclick={circleclicked}/>
+  return <Gamecircle key={id} id={id} className={`player_${gameBoard[id]}`} oncircleclick={circleclicked}/>
 }
 
   return (
-  <div className="gameboard">
-    {rendercircle(0)}
-    {rendercircle(1)}
-    {rendercircle(2)}
-    {rendercircle(3)}
-    {rendercircle(4)}
-    {rendercircle(5)}
-    {rendercircle(6)}
-    {rendercircle(7)}
-    {rendercircle(8)}
-    {rendercircle(9)}
-    {rendercircle(10)}
-    {rendercircle(11)}
-    {rendercircle(12)}
-    {rendercircle(13)}
-    {rendercircle(14)}
-    {rendercircle(15)}
-    {rendercircle(16)}
-    
-   </div>
+   <>
+    <Header gamestatee={gamestatee}  the_current_player={currentplayer} winner ={thewinner}/>
+    <div className="gameboard">
+      {init_b()}
+    </div>
+    <Footer onClickEv={initalisethegame} onsuggest={suggestmove}/>
+   </>
  )
 }
 
